@@ -1,0 +1,3 @@
+pnpm exec nx affected:lint --base=main
+pnpm exec nx affected:test --base=main
+# pnpm exec nx affected:e2e
