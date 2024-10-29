@@ -31,30 +31,29 @@ export default defineConfig({
     cwd: workspaceRoot,
   },
   projects: [
+    // Desktop browsers
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
 
-    // Uncomment for mobile browsers support
-    /* {
+    // Mobile browsers
+    {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
     },
     {
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] },
-    }, */
+    },
 
     // Uncomment for branded browsers
     /* {

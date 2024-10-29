@@ -5,10 +5,18 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   actions: read
   contents: read
+
+env:
+  HUSKY: 0
 
 jobs:
   main:
@@ -26,13 +34,25 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
-      # - run: pnpm exec cypress install
-      - run: pnpm exec playwright install
-      - uses: nrwl/nx-set-shas@v4
+      # This enables task distribution via Nx Cloud
+      # Learn more at https://nx.dev/ci/features/distribute-task-execution
+      - name: Start Nx Cloud CI run
+        run: pnpm dlx nx-cloud start-ci-run --distribute-on="3 linux-medium-js"
 
-      # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      # - run: pnpm exec nx-cloud record -- echo Hello World
-      # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      # When you enable task distribution, run the e2e-ci task instead of e2e
-      - run: pnpm exec nx affected -t lint test build e2e
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # - name: Install cypress
+      #   run: pnpm exec cypress install
+      - name: Install playwright
+        run: pnpm exec playwright install
+      - name: Set Nx SHA
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Run lint for affected projects
+        run: pnpm exec nx affected --target lint
+      - name: Run tests for affected projects
+        run: pnpm exec nx affected --target test --ci --coverage
+      - name: Run build for affected projects
+        run: pnpm exec nx affected --target build
+      - name: Run e2e for affected projects
+        run: pnpm exec nx affected --target e2e-ci
