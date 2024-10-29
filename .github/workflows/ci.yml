@@ -48,11 +48,5 @@ jobs:
       - name: Set Nx SHA
         uses: nrwl/nx-set-shas@v4
 
-      - name: Run lint for affected projects
-        run: pnpm exec nx affected --target lint
-      - name: Run tests for affected projects
-        run: pnpm exec nx affected --target test --ci --coverage
-      - name: Run build for affected projects
-        run: pnpm exec nx affected --target build
-      - name: Run e2e for affected projects
-        run: pnpm exec nx affected --target e2e-ci
+      - name: Run tasks for affected projects
+        run: pnpm exec nx affected --target lint test e2e-ci build

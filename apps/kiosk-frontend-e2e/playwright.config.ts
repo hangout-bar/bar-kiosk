@@ -65,4 +65,5 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     } */
   ],
+  reporter: process.env.CI ? 'github' : 'list',
 });
